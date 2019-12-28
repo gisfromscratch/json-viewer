@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Json.Data.Model", "Json.Dat
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Json.Data.IO", "Json.Data.IO\Json.Data.IO.csproj", "{5D792F6F-D418-4178-BECC-ED2B0117353D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Json.Data.IO.Testing", "Json.Data.IO.Testing\Json.Data.IO.Testing.csproj", "{29CEE180-607D-468C-8299-C6BC81F3C910}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{5D792F6F-D418-4178-BECC-ED2B0117353D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5D792F6F-D418-4178-BECC-ED2B0117353D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5D792F6F-D418-4178-BECC-ED2B0117353D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{29CEE180-607D-468C-8299-C6BC81F3C910}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{29CEE180-607D-468C-8299-C6BC81F3C910}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{29CEE180-607D-468C-8299-C6BC81F3C910}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{29CEE180-607D-468C-8299-C6BC81F3C910}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -33,12 +33,13 @@ namespace Json.Data.IO
         /// </summary>
         /// <param name="filePath">path to the file</param>
         /// <returns><see cref="IEnumerable{JsonItem}"/> for all contained items.</returns>
+        /// <remarks>An <see cref="Utf8JsonReader"/> instance cannot be created when using yield return iterator block.</remarks>
         public static IEnumerable<JsonItem> Parse(string filePath)
         {
-            const int bytes = 2048;
+            var items = new List<JsonItem>();
             using (var fileStream = File.OpenRead(filePath))
             {
-                var buffer = new byte[bytes];
+                var buffer = new byte[fileStream.Length];
                 int bytesRead;
                 while (0 < (bytesRead = fileStream.Read(buffer, 0, buffer.Length)))
                 {
@@ -49,12 +50,13 @@ namespace Json.Data.IO
                         switch (reader.TokenType)
                         {
                             case JsonTokenType.StartObject:
-                                yield return new JsonItem();
+                                items.Add(new JsonItem());
                                 break;
                         }
                     }
                 }
             }
+            return items;
         }
     }
 }

@@ -1,4 +1,4 @@
-Ôªø/*
+/*
  * Copyright 2019 Jan Tschada
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,29 +14,25 @@
  * limitations under the License.
  */
 
-using System.Collections.Generic;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Json.Data.Model
+namespace Json.Data.IO.Testing
 {
     /// <summary>
-    /// Represents a simple Json item.
+    /// Represents the test suite for the Json file implementation.
     /// </summary>
-    public class JsonItem
+    [TestClass]
+    public class JsonFileTestSuite
     {
-        public JsonItem()
+        [TestMethod]
+        public void TestReadFile()
         {
-            Properties = new Dictionary<string, JsonItem>();
-            Childs = new List<JsonItem>();
+            foreach (var jsonItem in JsonFile.Parse(@"data/Straﬂenverkehrslage.json"))
+            {
+                Assert.IsNotNull(jsonItem, @"A JSON item must not be null!");
+                Assert.IsNotNull(jsonItem.Childs, @"The childs of a JSON item must not be null!");
+                Assert.IsNotNull(jsonItem.Properties, @"The properties of a JSON item must not be null!");
+            }
         }
-
-        /// <summary>
-        /// The properties of this item.
-        /// </summary>
-        public IDictionary<string, JsonItem> Properties { get; }
-
-        /// <summary>
-        /// The childs of this item.
-        /// </summary>
-        public IEnumerable<JsonItem> Childs { get; }
     }
 }
