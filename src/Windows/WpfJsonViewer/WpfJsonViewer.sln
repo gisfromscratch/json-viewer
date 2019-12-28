@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfJsonViewer", "WpfJsonVie
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Json.Data.Model", "Json.Data.Model\Json.Data.Model.csproj", "{D020B490-C1D7-46D0-A8E7-E4827BBEA513}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Json.Data.IO", "Json.Data.IO\Json.Data.IO.csproj", "{5D792F6F-D418-4178-BECC-ED2B0117353D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{D020B490-C1D7-46D0-A8E7-E4827BBEA513}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D020B490-C1D7-46D0-A8E7-E4827BBEA513}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D020B490-C1D7-46D0-A8E7-E4827BBEA513}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5D792F6F-D418-4178-BECC-ED2B0117353D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5D792F6F-D418-4178-BECC-ED2B0117353D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5D792F6F-D418-4178-BECC-ED2B0117353D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5D792F6F-D418-4178-BECC-ED2B0117353D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
