@@ -41,6 +41,9 @@ namespace Json.Data.IO
             {
                 var buffer = new byte[fileStream.Length];
                 int bytesRead;
+                JsonItem currentItem = null;
+                string propertyName = null;
+                ICollection<JsonItem> values = null;
                 while (0 < (bytesRead = fileStream.Read(buffer, 0, buffer.Length)))
                 {
                     var byteSequence = new ReadOnlySequence<byte>(buffer, 0, bytesRead);
@@ -50,7 +53,53 @@ namespace Json.Data.IO
                         switch (reader.TokenType)
                         {
                             case JsonTokenType.StartObject:
-                                items.Add(new JsonItem());
+                                currentItem = new JsonItem();
+                                items.Add(currentItem);
+                                break;
+                            case JsonTokenType.StartArray:
+                                values = new List<JsonItem>();
+                                break;
+                            case JsonTokenType.EndArray:
+                                if (currentItem.Properties.TryGetValue(propertyName, out JsonItem jsonItem))
+                                {
+                                    jsonItem.Value = values;
+                                }
+                                else
+                                {
+                                    var valuesItem = new JsonItem();
+                                    valuesItem.Value = values;
+                                    currentItem.Properties.Add(propertyName, valuesItem);
+                                }
+                                values = null;
+                                break;
+                            case JsonTokenType.PropertyName:
+                                propertyName = reader.GetString();
+                                break;
+
+                            case JsonTokenType.String:
+                                var stringItem = new JsonItem();
+                                stringItem.Value = reader.GetString();
+                                if (null == values)
+                                {
+                                    currentItem.Properties.Add(propertyName, stringItem);
+                                }
+                                else
+                                {
+                                    values.Add(stringItem);
+                                }
+                                break;
+
+                            case JsonTokenType.Number:
+                                var numberItem = new JsonItem();
+                                numberItem.Value = reader.GetDouble();
+                                if (null == values)
+                                {
+                                    currentItem.Properties.Add(propertyName, numberItem);
+                                }
+                                else
+                                {
+                                    values.Add(numberItem);
+                                }
                                 break;
                         }
                     }

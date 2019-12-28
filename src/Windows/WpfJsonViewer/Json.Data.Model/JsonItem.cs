@@ -37,6 +37,11 @@ namespace Json.Data.Model
         /// <summary>
         /// The childs of this item.
         /// </summary>
-        public IEnumerable<JsonItem> Childs { get; }
+        public ICollection<JsonItem> Childs { get; }
+
+        /// <summary>
+        /// The value of this item.
+        /// </summary>
+        public object Value { get; set; }
     }
 }
