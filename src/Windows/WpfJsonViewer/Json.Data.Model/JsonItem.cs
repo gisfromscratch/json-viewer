@@ -14,34 +14,25 @@
  * limitations under the License.
  */
 
-using System.Collections.Generic;
-
 namespace Json.Data.Model
 {
     /// <summary>
-    /// Represents a simple Json item.
+    /// Represents a JSON item.
     /// </summary>
     public class JsonItem
-    {
-        public JsonItem()
-        {
-            Properties = new Dictionary<string, JsonItem>();
-            Childs = new List<JsonItem>();
-        }
-
-        /// <summary>
-        /// The properties of this item.
-        /// </summary>
-        public IDictionary<string, JsonItem> Properties { get; }
-
-        /// <summary>
-        /// The childs of this item.
-        /// </summary>
-        public ICollection<JsonItem> Childs { get; }
-
+    { 
         /// <summary>
         /// The value of this item.
         /// </summary>
         public object Value { get; set; }
+
+        /// <summary>
+        /// Adds a value to this item.
+        /// </summary>
+        /// <param name="value">the value to add</param>
+        public virtual void AddValue(object value)
+        {
+            Value = value;
+        }
     }
 }

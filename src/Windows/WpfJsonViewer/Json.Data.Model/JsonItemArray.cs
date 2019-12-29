@@ -1,4 +1,4 @@
-/*
+Ôªø/*
  * Copyright 2019 Jan Tschada
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,23 +14,31 @@
  * limitations under the License.
  */
 
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections.Generic;
 
-namespace Json.Data.IO.Testing
+namespace Json.Data.Model
 {
     /// <summary>
-    /// Represents the test suite for the Json file implementation.
+    /// Represents a JSON item array.
     /// </summary>
-    [TestClass]
-    public class JsonFileTestSuite
+    public class JsonItemArray : JsonItem
     {
-        [TestMethod]
-        public void TestReadFile()
+        /// <summary>
+        /// Creates a new array for JSON items.
+        /// </summary>
+        public JsonItemArray()
         {
-            foreach (var jsonItem in JsonFile.Parse(@"data/Straﬂenverkehrslage.json"))
-            {
-                Assert.IsNotNull(jsonItem, @"A JSON item must not be null!");
-            }
+            Items = new List<object>();
+        }
+
+        /// <summary>
+        /// The items of this array.
+        /// </summary>
+        public ICollection<object> Items { get; }
+
+        public override void AddValue(object value)
+        {
+            Items.Add(value);
         }
     }
 }

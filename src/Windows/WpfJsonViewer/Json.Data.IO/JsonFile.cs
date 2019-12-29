@@ -19,7 +19,7 @@ using System.Buffers;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
-using System.Text.Json.Serialization;
+using JsonElement = Json.Data.Model.JsonElement;
 
 namespace Json.Data.IO
 {
@@ -36,76 +36,94 @@ namespace Json.Data.IO
         /// <remarks>An <see cref="Utf8JsonReader"/> instance cannot be created when using yield return iterator block.</remarks>
         public static IEnumerable<JsonItem> Parse(string filePath)
         {
-            var items = new List<JsonItem>();
-            using (var fileStream = File.OpenRead(filePath))
+            var rootItems = new List<JsonItem>();
+
+            var buffer = File.ReadAllBytes(filePath);
+            var itemStack = new Stack<JsonItem>();
+            JsonItem currentProperty = null;
+
+            var byteSequence = new ReadOnlySequence<byte>(buffer, 0, buffer.Length);
+            var reader = new Utf8JsonReader(byteSequence);
+            while (reader.Read())
             {
-                var buffer = new byte[fileStream.Length];
-                int bytesRead;
-                JsonItem currentItem = null;
-                string propertyName = null;
-                ICollection<JsonItem> values = null;
-                while (0 < (bytesRead = fileStream.Read(buffer, 0, buffer.Length)))
+                switch (reader.TokenType)
                 {
-                    var byteSequence = new ReadOnlySequence<byte>(buffer, 0, bytesRead);
-                    var reader = new Utf8JsonReader(byteSequence);
-                    while (reader.Read())
-                    {
-                        switch (reader.TokenType)
+                    case JsonTokenType.StartObject:
+                        var newElement = new JsonElement();
+                        if (null != currentProperty)
                         {
-                            case JsonTokenType.StartObject:
-                                currentItem = new JsonItem();
-                                items.Add(currentItem);
-                                break;
-                            case JsonTokenType.StartArray:
-                                values = new List<JsonItem>();
-                                break;
-                            case JsonTokenType.EndArray:
-                                if (currentItem.Properties.TryGetValue(propertyName, out JsonItem jsonItem))
-                                {
-                                    jsonItem.Value = values;
-                                }
-                                else
-                                {
-                                    var valuesItem = new JsonItem();
-                                    valuesItem.Value = values;
-                                    currentItem.Properties.Add(propertyName, valuesItem);
-                                }
-                                values = null;
-                                break;
-                            case JsonTokenType.PropertyName:
-                                propertyName = reader.GetString();
-                                break;
-
-                            case JsonTokenType.String:
-                                var stringItem = new JsonItem();
-                                stringItem.Value = reader.GetString();
-                                if (null == values)
-                                {
-                                    currentItem.Properties.Add(propertyName, stringItem);
-                                }
-                                else
-                                {
-                                    values.Add(stringItem);
-                                }
-                                break;
-
-                            case JsonTokenType.Number:
-                                var numberItem = new JsonItem();
-                                numberItem.Value = reader.GetDouble();
-                                if (null == values)
-                                {
-                                    currentItem.Properties.Add(propertyName, numberItem);
-                                }
-                                else
-                                {
-                                    values.Add(numberItem);
-                                }
-                                break;
+                            currentProperty.AddValue(newElement);
                         }
-                    }
+                        else if (0 < itemStack.Count)
+                        {
+                            var objectParent = (JsonItemArray)itemStack.Peek();
+                            objectParent.AddValue(newElement);
+                        }
+                        itemStack.Push(newElement);
+                        currentProperty = null;
+                        break;
+                    case JsonTokenType.EndObject:
+                        var poppedObject = itemStack.Pop();
+                        if (0 == itemStack.Count)
+                        {
+                            rootItems.Add(poppedObject);
+                        }
+                        break;
+                    case JsonTokenType.StartArray:
+                        var newArray = new JsonItemArray();
+                        if (null != currentProperty)
+                        {
+                            currentProperty.AddValue(newArray);
+                        }
+                        else if (0 < itemStack.Count)
+                        {
+                            var arrayParent = (JsonItemArray)itemStack.Peek();
+                            arrayParent.AddValue(newArray);
+                        }
+                        itemStack.Push(newArray);
+                        currentProperty = null;
+                        break;
+                    case JsonTokenType.EndArray:
+                        var poppedArray = itemStack.Pop();
+                        if (0 == itemStack.Count)
+                        {
+                            rootItems.Add(poppedArray);
+                        }
+                        break;
+                    case JsonTokenType.PropertyName:
+                        var propertyName = reader.GetString();
+                        var propertyParent = (JsonElement)itemStack.Peek();
+                        currentProperty = propertyParent.CreateProperty(propertyName);
+                        break;
+
+                    case JsonTokenType.String:
+                        var stringValue = reader.GetString();
+                        if (null != currentProperty)
+                        {
+                            currentProperty.AddValue(stringValue);
+                        }
+                        else
+                        {
+                            var stringParent = itemStack.Peek();
+                            stringParent.AddValue(stringValue);
+                        }
+                        break;
+
+                    case JsonTokenType.Number:
+                        var doubleValue = reader.GetDouble();
+                        if (null != currentProperty)
+                        {
+                            currentProperty.AddValue(doubleValue);
+                        }
+                        else
+                        {
+                            var doubleParent = itemStack.Peek();
+                            doubleParent.AddValue(doubleValue);
+                        }
+                        break;
                 }
             }
-            return items;
+            return rootItems;
         }
     }
 }
