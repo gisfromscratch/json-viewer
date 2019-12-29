@@ -29,22 +29,23 @@ namespace Json.Data.Model
         /// </summary>
         public JsonElement()
         {
-            Properties = new Dictionary<string, JsonItem>();
+            Properties = new Dictionary<string, JsonProperty>();
         }
 
         /// <summary>
         /// The properties of this element.
         /// </summary>
-        public IDictionary<string, JsonItem> Properties { get; }
+        public IDictionary<string, JsonProperty> Properties { get; }
 
         /// <summary>
         /// Creates a new property using an unique name.
         /// </summary>
         /// <param name="name">the name of the property</param>
         /// <returns><see cref="JsonItem"/></returns>
-        public JsonItem CreateProperty(string name)
+        public JsonProperty CreateProperty(string name)
         {
-            var newProperty = new JsonItem();
+            var newProperty = new JsonProperty();
+            newProperty.Name = name;
             Properties.Add(name, newProperty);
             return newProperty;
         }

@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
+using Json.Data.IO;
+using System.Collections.Generic;
 using System.Windows;
+using WpfJsonViewer.ViewModel;
 
 namespace WpfJsonViewer
 {
@@ -26,6 +29,30 @@ namespace WpfJsonViewer
         public MainWindow()
         {
             InitializeComponent();
+        }
+
+        private void TreeView_Drop(object sender, DragEventArgs e)
+        {
+            if (!e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                return;
+            }
+
+            var filePaths = (string[])e.Data.GetData(DataFormats.FileDrop);
+            var viewModels = new List<JsonItemViewModel>();
+            foreach (var filePath in filePaths)
+            {
+                foreach (var jsonItem in JsonFile.Parse(filePath))
+                {
+                    var viewModel = new JsonItemViewModel(new JsonViewItem(jsonItem));
+                    viewModels.Add(viewModel);
+                }
+            }
+
+            if (0 < viewModels.Count)
+            {
+                DataContext = viewModels[0];
+            }
         }
     }
 }
