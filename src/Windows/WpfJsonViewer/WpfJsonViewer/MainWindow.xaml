@@ -8,6 +8,13 @@
         Title="Tree View Drag and Drop JSON file" Height="450" Width="800">
     <Grid>
         <TreeView ItemsSource="{Binding Children}" AllowDrop="True" Drop="TreeView_Drop">
+            <TreeView.ItemContainerStyle>
+                <Style TargetType="TreeViewItem">
+                    <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+                    <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
+                </Style>
+            </TreeView.ItemContainerStyle>
+            
             <TreeView.ItemTemplate>
                 <HierarchicalDataTemplate ItemsSource="{Binding Children}">
                     <TextBlock Text="{Binding Label}" />

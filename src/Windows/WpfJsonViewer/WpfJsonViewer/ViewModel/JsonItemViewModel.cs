@@ -15,16 +15,20 @@
  */
 
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace WpfJsonViewer.ViewModel
 {
     /// <summary>
     /// Represents the view model for JSON items.
     /// </summary>
-    public class JsonItemViewModel
+    public class JsonItemViewModel : INotifyPropertyChanged
     {
         private readonly JsonViewItem _rootItem;
+        private bool _expanded;
+        private bool _selected;
 
         internal JsonItemViewModel(JsonViewItem rootItem)
         {
@@ -36,6 +40,39 @@ namespace WpfJsonViewer.ViewModel
 
         public string Label { get => _rootItem.Label; }
 
+        public bool IsExpanded
+        {
+            get => _expanded;
+            set
+            {
+                if (value != _expanded)
+                {
+                    _expanded = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        public bool IsSelected
+        {
+            get => _selected;
+            set
+            {
+                if (value != _selected)
+                {
+                    _selected = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
         public ReadOnlyCollection<JsonItemViewModel> Children { get; private set; }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void OnPropertyChanged([CallerMemberName] string propertyName=null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }
