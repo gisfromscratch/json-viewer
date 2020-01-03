@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+using Json.Data.Model;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
@@ -26,16 +28,32 @@ namespace WpfJsonViewer.ViewModel
     /// </summary>
     public class JsonItemViewModel : INotifyPropertyChanged
     {
+        private static readonly ReadOnlyCollection<JsonItemViewModel> _defaultChildren;
         private readonly JsonViewItem _rootItem;
+        private ReadOnlyCollection<JsonItemViewModel> _children;
         private bool _expanded;
         private bool _selected;
 
-        internal JsonItemViewModel(JsonViewItem rootItem)
+        static JsonItemViewModel()
+        {
+            var defaultProperty = new JsonProperty { Name = @". . ." };
+            var defaultChildItem = new JsonViewItem(defaultProperty);
+            _defaultChildren = new ReadOnlyCollection<JsonItemViewModel>(new List<JsonItemViewModel> { new JsonItemViewModel(defaultChildItem) });
+        }
+
+        internal JsonItemViewModel(JsonViewItem rootItem, bool loadChildren = true)
         {
             _rootItem = rootItem;
-            Children = new ReadOnlyCollection<JsonItemViewModel>(
-                (from item in _rootItem.Children 
-                 select new JsonItemViewModel(item)).ToList());
+            if (loadChildren)
+            {
+                _children = new ReadOnlyCollection<JsonItemViewModel>(
+                (from item in _rootItem.Children
+                 select new JsonItemViewModel(item, false)).ToList());
+            }
+            else
+            {
+                _children = _defaultChildren;
+            }
         }
 
         public string Label { get => _rootItem.Label; }
@@ -48,6 +66,16 @@ namespace WpfJsonViewer.ViewModel
                 if (value != _expanded)
                 {
                     _expanded = value;
+                    if (_expanded)
+                    {
+                        Children = new ReadOnlyCollection<JsonItemViewModel>(
+                        (from item in _rootItem.Children
+                        select new JsonItemViewModel(item, false)).ToList());
+                    }
+                    else
+                    {
+                        Children = _defaultChildren;
+                    }
                     OnPropertyChanged();
                 }
             }
@@ -66,7 +94,18 @@ namespace WpfJsonViewer.ViewModel
             }
         }
 
-        public ReadOnlyCollection<JsonItemViewModel> Children { get; private set; }
+        public ReadOnlyCollection<JsonItemViewModel> Children
+        {
+            get => _children;
+            private set
+            {
+                if (value != _children)
+                {
+                    _children = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
