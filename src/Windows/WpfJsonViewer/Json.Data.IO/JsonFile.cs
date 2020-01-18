@@ -101,6 +101,7 @@ namespace Json.Data.IO
                         if (null != currentProperty)
                         {
                             currentProperty.AddValue(stringValue);
+                            currentProperty = null;
                         }
                         else
                         {
@@ -114,6 +115,7 @@ namespace Json.Data.IO
                         if (null != currentProperty)
                         {
                             currentProperty.AddValue(doubleValue);
+                            currentProperty = null;
                         }
                         else
                         {
